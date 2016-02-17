@@ -102,13 +102,15 @@ count = 0
 
 def can_be_a_membrane(img, grad):
     global count
-    if img[0,0]<143 and grad[0,0]>43:
+    if img[0,0]<154 and grad[0,0]>15:
         count += 1
-      #  if count%5:
-      #      return 0
+        if count%1:
+            return 0
         if not count%1000:
             print count/1000
+
         return int(model_predict(model, img.get_frame(None, 29))[0][1]*255)
+
 
     else:
         return 0

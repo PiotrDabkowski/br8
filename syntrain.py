@@ -7,13 +7,14 @@ from dataset_gen import DGen, img, syn, mem, ves
 
 def condition(img, pos):
     img._setcurrent(pos)
-    return img[0,0] < 144
+    return img[0,0] < 154
 
 
-IM_SIZE = 29
+IM_SIZE = 35
+NUM_TRAIN = 30000
 assert IM_SIZE % 2
-dg = DGen(img, mem)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(30000, IM_SIZE, ns=5, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
+dg = DGen(img, syn)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=5, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -51,7 +52,7 @@ def anal(n):
     show_arr(x.reshape(img_cols,img_rows))
 
 
-num = 30000
+num = NUM_TRAIN
 X_train = X_train[:num]
 y_train = y_train[:num]
 
@@ -110,12 +111,12 @@ model.add(Activation('relu'))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
 
-save_model(model, 'testing_mem_detection')
+save_model(model, 'testing_syn_detection')
 
 
 from code import InteractiveConsole
