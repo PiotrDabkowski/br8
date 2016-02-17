@@ -104,8 +104,8 @@ def can_be_a_membrane(img, grad):
     global count
     if img[0,0]<143 and grad[0,0]>43:
         count += 1
-        if count%5:
-            return 0
+      #  if count%5:
+      #      return 0
         if not count%1000:
             print count/1000
         return int(model_predict(model, img.get_frame(None, 29))[0][1]*255)
@@ -136,11 +136,11 @@ def to_proper(path):
     Image.open(path).convert('L').convert('LA').save(path)
 
 
-model = load_model('testing_mem_detection')
+model = load_model('testing_mem_detection_dark144_85acc')
 
 
 to_proper(TES)
-NUM = 0
+NUM = 15
 a = EasyImage(IMG)
 a.seek(NUM)
 

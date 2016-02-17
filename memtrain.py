@@ -17,20 +17,19 @@ dg = DGen()
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
+    def ev(a):
+        return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
     model = load_model('testing_mem_detection')
     for n in xrange(num):
-        x = X_test[30+n:30+n+1]
-        show_arr(x)
-        ans = 1 if raw_input()=='1' else 0
-        comp = 1 if model.predict(x).argmax()==y_test[n] else 0
+        x = X_test[n:n+1]
+        comp = model.predict(x).argmax()==y_test[n]
         c += comp
-        if y_test[n]==ans:
-            print 'You - Correct,   Computer - ', 'Correct' if comp else 'Wrong'
-            s += 1
-        else:
-            print 'You - Wrong,   Computer - ', 'Correct' if comp else 'Wrong'
+        show_arr(x)
+        you = (1 if raw_input()=='1' else 0)==y_test[n]
+        s += you
+        print 'You', ev(you), '  Computer', ev(comp)
     print
     print 'You had', s/float(num), 'correct!'
     print 'Computer had', c/float(num), 'correct!'
@@ -89,6 +88,9 @@ Y_train = np_utils.to_categorical(y_train, nb_classes)
 print Y_train[:10]
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
+
+#quiz()
+
 model = Sequential()
 
 model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='valid', input_shape=(1, img_rows, img_cols)))
@@ -113,9 +115,15 @@ model.compile(loss='categorical_crossentropy', optimizer='adam')
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
 
-
+model.evaluate()
 save_model(model, 'testing_mem_detection')
 
 
 from code import InteractiveConsole
 InteractiveConsole(globals()).interact()
+
+for n in xrange(30, 55):
+    if model.predict(X_test[n:n+1]).argmax()==y_test[n]:
+        print 'Correct'
+    else:
+        print 'Wrong'
