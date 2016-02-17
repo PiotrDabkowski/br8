@@ -23,16 +23,17 @@ def rpos():
 
 
 class DGen:
-    def __init__(self, im=mem):
-        self.im = im
+    def __init__(self, raw=img, labels=mem):
+        self.labels = labels
+        self.raw = raw
 
     def get_pos_labels(self, n):
-        self.im.seek(n)
-        self.im._setcurrent((0,0))
+        self.labels.seek(n)
+        self.labels._setcurrent((0, 0))
         res = {1:[],
                0: []}
-        for px in self.im:
-            if self.im[px]>250:
+        for px in self.labels:
+            if self.labels[px]>250:
                 res[1].append(px)
             else:
                 res[0].append(px)
@@ -40,23 +41,25 @@ class DGen:
         random.shuffle(res[1])
         return res
 
-    def get_uni_train(self, num, size=29, frac_true=0.5, ns=10):
+    def get_uni_train(self, num, size=29, frac_true=0.5, ns=10, condition=None):
         '''Gets traning dataset from ns images'''
-        vals = [self.get_train(num/ns, size, frac_true, n) for n in xrange(ns)]
+        vals = [self.get_train(num/ns, size, frac_true, n, condition) for n in xrange(ns)]
         return np.concatenate(tuple(v[0] for v in vals)), np.concatenate(tuple(v[1] for v in vals))
 
 
-    def get_train(self, num, size=29, frac_true=0.5, n=0):
+    def get_train(self, num, size=29, frac_true=0.5, n=0, condition=None):
         positive = int(num*frac_true)
         negative = num - positive
         assert (positive and negative)
         labels = self.get_pos_labels(n)
-        img.seek(n)
+        self.raw.seek(n)
         pX = []
         for label in (0, 1):
             for pos in labels[label]:
                 try:
-                    pX.append(img.get_frame(pos, size))
+                    if condition and not condition(self.raw, pos):
+                        continue
+                    pX.append(self.raw.get_frame(pos, size))
                     if len(pX)==negative+label*positive:
                         break
                 except:

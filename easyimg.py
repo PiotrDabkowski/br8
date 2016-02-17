@@ -49,9 +49,10 @@ class EasyImage(TiffImagePlugin.TiffImageFile):
         return new
 
     def get_frame(self, cen, dim):
-        assert dim%2
+        if cen is not None:
+            self._setcurrent(cen)
+        #assert dim%2
         d = dim/2
-        self._setcurrent(cen)
         arr = []
         for x in xrange(-d, d+1):
             row = []

@@ -3,8 +3,17 @@ from utils import *
 import cPickle
 import numpy as np
 from dataset_gen import DGen
+
+
+def condition(img, pos):
+    img._setcurrent(pos)
+    return img[0,0] < 144
+
+
+IM_SIZE = 29
+assert IM_SIZE % 2
 dg = DGen()
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(10000, 29, ns=10), dg.get_train(100, 29, n=11)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(30000, IM_SIZE, ns=5, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -43,7 +52,7 @@ def anal(n):
     show_arr(x.reshape(img_cols,img_rows))
 
 
-num = 10000
+num = 30000
 X_train = X_train[:num]
 y_train = y_train[:num]
 
@@ -55,12 +64,13 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten, Highway
 from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
+from keras.optimizers import SGD, Adam
 
 batch_size = 128
 nb_classes = 2
 nb_epoch = 3
 
-img_rows, img_cols = 29, 29
+img_rows = img_cols = IM_SIZE
 nb_filters = 32
 nb_pool = 2
 nb_conv = 3
@@ -70,8 +80,10 @@ X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
 X_test = X_test.reshape(X_test.shape[0], 1, img_rows, img_cols)
 X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
-X_train /= 255
-X_test /= 255
+#X_train /= 255
+#X_test /= 255
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
 
 Y_train = np_utils.to_categorical(y_train, nb_classes)
 print Y_train[:10]

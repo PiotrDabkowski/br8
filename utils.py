@@ -11,3 +11,7 @@ def load_model(path):
     model.load_weights('%s.h5' % path)
     return model
 
+def model_predict(model, x, dim=None):
+    if dim is None:
+        dim = x.shape[0]
+    return model.predict(x.reshape(1, 1, dim, dim)/255.0)#[1]#.argmax()

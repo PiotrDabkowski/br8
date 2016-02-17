@@ -1,6 +1,7 @@
 from easyimg import EasyImage
 import random
 from PIL import Image
+from utils import *
 from gradient_calc import find_grad, from_grad_res, gradient_show
 
 HV_MOVES = ((0,1), (0,-1), (1,0),(-1,0))
@@ -10,6 +11,7 @@ MEM = 'Archive/membrane.tif'
 VES = 'Archive/vesicle.tif'
 TES = 'Archive/test.tif'
 #IMG = TES
+
 
 
 
@@ -96,9 +98,18 @@ def retina(im):
 def avg(a, b):
     return (a[0,0] + b[0,0])/2
 
+count = 0
+
 def can_be_a_membrane(img, grad):
+    global count
     if img[0,0]<143 and grad[0,0]>43:
-        return 255
+        count += 1
+        if count%5:
+            return 0
+        if not count%1000:
+            print count/1000
+        return int(model_predict(model, img.get_frame(None, 29))[0][1]*255)
+
     else:
         return 0
 
@@ -124,6 +135,10 @@ def reverse(im):
 def to_proper(path):
     Image.open(path).convert('L').convert('LA').save(path)
 
+
+model = load_model('testing_mem_detection')
+
+
 to_proper(TES)
 NUM = 0
 a = EasyImage(IMG)
@@ -134,6 +149,7 @@ a.save('a1.tif')
 
 b = a.refactor(retina)
 c = a.merge(b, can_be_a_membrane)#.expand_self(5, gradient_show).show()
+print count
 c.show()
 
 
