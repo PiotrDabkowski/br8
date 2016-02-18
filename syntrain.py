@@ -2,19 +2,20 @@ from scipy.misc import toimage
 from utils import *
 import cPickle
 import numpy as np
-from dataset_gen import DGen, img, syn, mem, ves
+from dataset_gen import DGen, img, syn, mem, ves, THRESHOLD
 
 
-def condition(img, pos):
-    img._setcurrent(pos)
-    return img[0,0] < 154
+def condition(raw, pos, label, others):
+    # VERY IMPORTANT - ACCEPT ONLY MEMBRANES !
+    others['mem']._setcurrent(pos) # refers to true membrane
+    return others['mem'][0,0] > THRESHOLD
 
 
-IM_SIZE = 35
-NUM_TRAIN = 30000
+IM_SIZE = 55
+NUM_TRAIN = 20000
 assert IM_SIZE % 2
 dg = DGen(img, syn)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=5, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=10, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -22,7 +23,7 @@ def quiz(num=25):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('testing_mem_detection')
+    model = load_model('testing_syn_detection')
     for n in xrange(num):
         x = X_test[n:n+1]
         comp = model.predict(x).argmax()==y_test[n]
@@ -40,7 +41,13 @@ def show_arr(arr):
     if len(arr.shape)!=2:
         dim = int(round(reduce(lambda a, b: a*b, arr.shape)**0.5))
         arr = arr.reshape(dim, dim)
-    toimage(arr).show()
+    toimage(arr.T).show()
+
+
+# for n in xrange(30):
+#     print y_test[n]
+#     show_arr(X_test[n:n+1])
+#     raw_input()
 
 #quiz()
 #sds
@@ -111,12 +118,12 @@ model.add(Activation('relu'))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer=sgd)
+model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
 
-save_model(model, 'testing_syn_detection')
+save_model(model, 'testing_syn_detection55')
 
 
 from code import InteractiveConsole

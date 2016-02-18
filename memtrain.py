@@ -5,7 +5,7 @@ import numpy as np
 from dataset_gen import DGen, img, syn, mem, ves
 
 
-def condition(img, pos):
+def condition(img, pos, label):
     img._setcurrent(pos)
     return img[0,0] < 144
 
