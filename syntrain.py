@@ -12,10 +12,10 @@ def condition(raw, pos, label, others):
 
 
 IM_SIZE = 55
-NUM_TRAIN = 20000
+NUM_TRAIN = 2000
 assert IM_SIZE % 2
 dg = DGen(img, syn)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=10, condition=condition), dg.get_train(300, IM_SIZE, n=11, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=1, condition=condition), dg.get_train(1000, IM_SIZE, n=30, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -23,10 +23,10 @@ def quiz(num=25):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('testing_syn_detection')
+    model = load_model('testing_syn_detection55_90acc')
     for n in xrange(num):
         x = X_test[n:n+1]
-        comp = model.predict(x).argmax()==y_test[n]
+        comp = model.predict(x.reshape(1,1,IM_SIZE,IM_SIZE)).argmax()==y_test[n]
         c += comp
         show_arr(x)
         you = (1 if raw_input()=='1' else 0)==y_test[n]
@@ -37,12 +37,15 @@ def quiz(num=25):
     print 'Computer had', c/float(num), 'correct!'
 
 
+
 def show_arr(arr):
     if len(arr.shape)!=2:
         dim = int(round(reduce(lambda a, b: a*b, arr.shape)**0.5))
         arr = arr.reshape(dim, dim)
     toimage(arr.T).show()
 
+
+quiz()
 
 # for n in xrange(30):
 #     print y_test[n]
@@ -75,7 +78,7 @@ from keras.optimizers import SGD, Adam
 
 batch_size = 128
 nb_classes = 2
-nb_epoch = 3
+nb_epoch = 1
 
 img_rows = img_cols = IM_SIZE
 nb_filters = 32
@@ -118,7 +121,7 @@ model.add(Activation('relu'))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
