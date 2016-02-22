@@ -35,6 +35,11 @@ class EasyImage(TiffImagePlugin.TiffImageFile):
             new.px[pixel] = val
         return new
 
+    def seek(self, frame):
+        r = TiffImagePlugin.TiffImageFile.seek(self, frame)
+        self.px = self.load()
+        return r
+
     def merge(self, other, func):
         self.px = self.load()
         new = EasyImage(self.path)
