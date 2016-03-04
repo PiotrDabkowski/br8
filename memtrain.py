@@ -14,7 +14,7 @@ IM_SIZE = 41
 NUM_TRAIN = 100000
 assert IM_SIZE % 2
 dg = DGen(img, mem)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=100, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=104, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
 
 
 #print X_train.shape, y_train.shape
@@ -43,7 +43,7 @@ def show_arr(arr):
         arr = arr.reshape(dim, dim)
     toimage(arr).show()
 
-quiz()
+#quiz()
 #sds
 
 def anal(n):
@@ -92,6 +92,8 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 
 #quiz()
+with open('Models/chuj.txt', 'wb') as f:
+    f.write('Started execution!')
 
 model = Sequential()
 
@@ -117,7 +119,7 @@ model.compile(loss='categorical_crossentropy', optimizer=sgd)
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
 
-save_model(model, 'mem_detection_new2')
+save_model(model, 'clus')
 
 
 from code import InteractiveConsole
