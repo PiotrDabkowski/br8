@@ -7,14 +7,14 @@ from dataset_gen import DGen, img, syn, mem, ves
 
 def condition(raw, pos, label, others):
     raw._setcurrent(pos)
-    return raw[0,0] < 154
+    return raw[0,0] < 160
 
 
-IM_SIZE = 35
-NUM_TRAIN = 80000
+IM_SIZE = 41
+NUM_TRAIN = 100000
 assert IM_SIZE % 2
 dg = DGen(img, mem)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=50, condition=condition), dg.get_train(1000, IM_SIZE, n=100, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=100, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
 
 
 #print X_train.shape, y_train.shape
@@ -23,7 +23,7 @@ def quiz(num=25):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('mem_detection_new')
+    model = load_model('mem_detection_new2')
     for n in xrange(num):
         x = X_test[n:n+1]
         comp = model.predict(x.reshape(1,1,IM_SIZE,IM_SIZE)).argmax()==y_test[n]
@@ -43,7 +43,7 @@ def show_arr(arr):
         arr = arr.reshape(dim, dim)
     toimage(arr).show()
 
-#quiz()
+quiz()
 #sds
 
 def anal(n):
@@ -117,7 +117,7 @@ model.compile(loss='categorical_crossentropy', optimizer=sgd)
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
 
-save_model(model, 'mem_detection_new')
+save_model(model, 'mem_detection_new2')
 
 
 from code import InteractiveConsole

@@ -11,11 +11,12 @@ def condition(raw, pos, label, others):
     return others['mem'][0,0] > THRESHOLD
 
 
-IM_SIZE = 55
-NUM_TRAIN = 2000
+IM_SIZE = 77
+NUM_TRAIN = 800
 assert IM_SIZE % 2
 dg = DGen(img, syn)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=1, condition=condition), dg.get_train(1000, IM_SIZE, n=30, condition=condition)
+
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=5, condition=condition), dg.get_train(1000, IM_SIZE, n=10, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -23,7 +24,8 @@ def quiz(num=25):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('testing_syn_detection55_90acc')
+    model = load_model('syn_detection_new3')
+    print 'Accuracy %f' % (model.evaluate(X_test, Y_test, verbose=1, show_accuracy=1)[1])
     for n in xrange(num):
         x = X_test[n:n+1]
         comp = model.predict(x.reshape(1,1,IM_SIZE,IM_SIZE)).argmax()==y_test[n]
@@ -45,14 +47,12 @@ def show_arr(arr):
     toimage(arr.T).show()
 
 
-quiz()
 
 # for n in xrange(30):
 #     print y_test[n]
 #     show_arr(X_test[n:n+1])
 #     raw_input()
 
-#quiz()
 #sds
 
 def anal(n):
@@ -99,8 +99,8 @@ Y_train = np_utils.to_categorical(y_train, nb_classes)
 print Y_train[:10]
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
+quiz()
 
-#quiz()
 
 model = Sequential()
 
@@ -123,11 +123,13 @@ model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
+
+from utils import load_model
+
+model = load_model('syn_detection_new2')
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
-
-save_model(model, 'testing_syn_detection55')
-
+save_model(model, 'syn_detection_new3')
 
 from code import InteractiveConsole
 InteractiveConsole(globals()).interact()

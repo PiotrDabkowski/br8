@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.utils import shuffle
 
 THRESHOLD = 200
-random.seed(1337)
+random.seed(1338)
 
 IMG = 'Archive/image.tif'
 img = EasyImage(IMG)

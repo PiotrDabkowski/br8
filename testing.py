@@ -1,3 +1,4 @@
+
 from easyimg import EasyImage
 import random
 from PIL import Image
@@ -127,6 +128,7 @@ def can_be_a_membrane(img, grad):
 def can_be_a_synapse(img, grad):
     global count
     if img[0,0]<154 and grad[0,0]>15:
+        # 40 percent candidate
         count += 1
         if not count%1000:
             print count/1000
@@ -139,23 +141,24 @@ def can_be_a_synapse(img, grad):
             import traceback
             print traceback.format_exc()
             return None
+
         # synapse
         if prob_mem>0.30:
-            syn_frame = img.get_frame(None, 55)
+            syn_frame = img.get_frame(None, 75)
             prob_syn = model_predict(synapse_model, syn_frame)[0][1]
-            return prob_syn*255
+            return int(prob_syn*255)
         else:
             return 0
     else:
         return 0
 
 def thresh(im):
-    if im[0,0]>110:
+    if im[0,0]>135:
         return 0
     return 255
 
 def nthresh(im):
-    if im[0,0]<11:
+    if im[0,0]<135:
         return 0
     return 255
 
@@ -173,16 +176,19 @@ def to_proper(path):
 
 
 
-from dataset_gen import mem, img
-img.seek(80)
-mem.seek(80)
+from dataset_gen import mem, img, syn
 
-red_mark(img, EasyImage('sample_membrane81.tif'), 130).show()
+mem.convert('L').save('aaa_mem.tif')
+to_proper('sample_membrane1.tif')
+EasyImage('sample_membrane1.tif').refactor(nthresh).convert('L').save('bbb_mem.tif')
 
-dfosdo
+red_mark(img, EasyImage('sample_synapse1.tif'), 160).show()
 
-membrane_model = load_model('mem_detection_new')
-synapse_model = load_model('testing_syn_detection55_90acc')
+
+
+
+membrane_model = load_model('mem_detection_new2')
+synapse_model = load_model('syn_detection_new2')
 
 
 to_proper(TES)
