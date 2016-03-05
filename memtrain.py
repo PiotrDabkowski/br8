@@ -11,20 +11,19 @@ def condition(raw, pos, label, others):
 
 
 IM_SIZE = 41
-NUM_TRAIN = 1000
+NUM_TRAIN = 100000
 assert IM_SIZE % 2
 dg = DGen(img, mem)
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=1, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=104, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
 
 
+#print X_train.shape, y_train.shape
 def quiz(num=25):
     def ev(a):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('clus')
-    print 'Accuracy %f' % (model.evaluate(X_test, Y_test, verbose=1, show_accuracy=1)[1])
-    return
+    model = load_model('mem_detection_new2')
     for n in xrange(num):
         x = X_test[n:n+1]
         comp = model.predict(x.reshape(1,1,IM_SIZE,IM_SIZE)).argmax()==y_test[n]
@@ -36,6 +35,7 @@ def quiz(num=25):
     print
     print 'You had', s/float(num), 'correct!'
     print 'Computer had', c/float(num), 'correct!'
+
 
 def show_arr(arr):
     if len(arr.shape)!=2:
@@ -91,7 +91,7 @@ print Y_train[:10]
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 
-quiz()
+#quiz()
 with open('Models/chuj.txt', 'wb') as f:
     f.write('Started execution!')
 

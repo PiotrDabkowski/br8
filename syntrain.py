@@ -12,11 +12,11 @@ def condition(raw, pos, label, others):
 
 
 IM_SIZE = 77
-NUM_TRAIN = 800
+NUM_TRAIN = 104000
 assert IM_SIZE % 2
 dg = DGen(img, syn)
 
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=5, condition=condition), dg.get_train(1000, IM_SIZE, n=10, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=104, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -78,7 +78,7 @@ from keras.optimizers import SGD, Adam
 
 batch_size = 128
 nb_classes = 2
-nb_epoch = 1
+nb_epoch = 2
 
 img_rows = img_cols = IM_SIZE
 nb_filters = 32
@@ -99,7 +99,7 @@ Y_train = np_utils.to_categorical(y_train, nb_classes)
 print Y_train[:10]
 Y_test = np_utils.to_categorical(y_test, nb_classes)
 
-quiz()
+#quiz()
 
 
 model = Sequential()
@@ -124,13 +124,11 @@ model.add(Activation('softmax'))
 model.compile(loss='categorical_crossentropy', optimizer=sgd)
 
 
-from utils import load_model
-
-model = load_model('syn_detection_new2')
 model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
 
-save_model(model, 'syn_detection_new3')
+save_model(model, 'synapse_clus77_1')
 
+raise
 from code import InteractiveConsole
 InteractiveConsole(globals()).interact()
 
