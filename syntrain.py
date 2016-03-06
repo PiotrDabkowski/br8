@@ -12,11 +12,11 @@ def condition(raw, pos, label, others):
 
 
 IM_SIZE = 77
-NUM_TRAIN = 104000
+NUM_TRAIN = 1040
 assert IM_SIZE % 2
 dg = DGen(img, syn)
 
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=104, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
+(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=1, condition=condition), dg.get_train(1000, IM_SIZE, n=108, condition=condition)
 
 #print X_train.shape, y_train.shape
 def quiz(num=25):
@@ -24,7 +24,7 @@ def quiz(num=25):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
-    model = load_model('syn_detection_new3')
+    model = load_model('synapse_clus77_1')
     print 'Accuracy %f' % (model.evaluate(X_test, Y_test, verbose=1, show_accuracy=1)[1])
     for n in xrange(num):
         x = X_test[n:n+1]
@@ -38,7 +38,7 @@ def quiz(num=25):
     print 'You had', s/float(num), 'correct!'
     print 'Computer had', c/float(num), 'correct!'
 
-
+quiz()
 
 def show_arr(arr):
     if len(arr.shape)!=2:
@@ -112,7 +112,7 @@ model.add(Activation('relu'))
 
 model.add(Flatten())
 model.add(Dense(256))
-model.add(Activation('relu'))
+model.add(Activation('relhu'))
 model.add(Dropout(0.15))
 
 model.add(Dense(128))
