@@ -99,11 +99,11 @@ def retina(im):
 def avg(a, b):
     return (a[0,0] + b[0,0])/2
 
-count = 0
+COUNT = 0
 
 
 def can_be_a_membrane(img, grad):
-    global count
+    global COUNT
     if img[0,0]<154 and grad[0,0]>15:
         count += 1
         if not count%1000:
@@ -126,7 +126,7 @@ def can_be_a_membrane(img, grad):
 
 
 def can_be_a_synapse(img, grad):
-    global count
+    global COUNT
     if img[0,0]<154 and grad[0,0]>15:
         # 40 percent candidate
         count += 1
@@ -187,8 +187,7 @@ red_mark(img, EasyImage('sample_synapse1.tif'), 160).show()
 
 
 
-membrane_model = load_model('mem_detection_new2')
-synapse_model = load_model('syn_detection_new2')
+
 
 
 to_proper(TES)
@@ -202,12 +201,12 @@ a.save('a1.tif')
 b = a.refactor(retina)
 
 c = a.merge(b, can_be_a_synapse)#.expand_self(5, gradient_show).show()
-print count
+print COUNT
 c.show()
 c.save('sample_synapse1.tif')
 
 c = a.merge(b, can_be_a_membrane)#.expand_self(5, gradient_show).show()
-print count
+print COUNT
 c.show()
 c.save('sample_membrane1.tif')
 

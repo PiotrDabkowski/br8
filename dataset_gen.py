@@ -4,8 +4,7 @@ import numpy as np
 from sklearn.utils import shuffle
 
 THRESHOLD = 200
-np.random.seed(100)
-random.seed(13399)
+
 
 IMG = 'Archive/image.tif'
 img = EasyImage(IMG)
@@ -24,7 +23,7 @@ SYN = 'Archive/synapse.tif'
 syn = EasyImage(SYN)
 
 SYNV = 'Archive/synapsev.tif'
-synv = EasyImage(SYN)
+synv = EasyImage(SYNV)
 
 def rpos():
     return (random.randrange(100, 900),random.randrange(100, 900))

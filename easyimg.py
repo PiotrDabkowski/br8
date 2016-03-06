@@ -97,3 +97,13 @@ class EasyImage(TiffImagePlugin.TiffImageFile):
             new._setcurrent((pixel[0]*rate+offset, pixel[1]*rate+offset))
             func(new, self[0,0])
         return new
+
+    def red_mark(self, source, threshold=150):
+        source._setcurrent((0,0))
+        new = self.convert('RGB')
+        newpx = new.load()
+        for pixel in source:
+            if source[pixel]>threshold:
+                newpx[pixel] = (255, 0, 0) # red
+        return new
+

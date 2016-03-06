@@ -11,17 +11,10 @@ def load_model(path):
     model.load_weights('Models/%s.h5' % path)
     return model
 
-def model_predict(model, x, dim=None, div=1.0):
+def model_predict(model, x, dim=None):
     if dim is None:
         dim = x.shape[0]
-    return model.predict(x.reshape(1, 1, dim, dim)/div)#[1]#.argmax()
+    return model.predict(x.reshape(1, 1, dim, dim))#[1]#.argmax()
 
 
-def red_mark(img, source, threshold=150):
-    source._setcurrent((0,0))
-    new = img.convert('RGB')
-    newpx = new.load()
-    for pixel in source:
-        if source[pixel]>threshold:
-            newpx[pixel] = (255, 0, 0) # red
-    return new
+
