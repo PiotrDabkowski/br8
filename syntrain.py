@@ -13,13 +13,13 @@ np.random.seed(1337)
 
 
 # PARAMS:
-
+MODEL_NAME = 'synapse'
 
 IM_SIZE = 77
 NUM_TRAIN = 120000
 NUM_IMGS = 120
 NUM_VAL = 1000
-VAL_IMG = 124
+VAL_IMG = 11
 assert IM_SIZE % 2
 NB_EPOCH = 1
 
@@ -30,6 +30,7 @@ img_rows = img_cols = IM_SIZE
 nb_filters = 32
 nb_pool = 2
 nb_conv = 3
+
 
 
 def condition(raw, pos, label, others):
