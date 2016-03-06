@@ -1,13 +1,18 @@
 from easyimg import EasyImage, show_arr
 import random
 import numpy as np
-#from sklearn.utils import shuffle
+from sklearn.utils import shuffle
 
 THRESHOLD = 200
-random.seed(1338)
+np.random.seed(100)
+random.seed(13399)
 
 IMG = 'Archive/image.tif'
 img = EasyImage(IMG)
+
+
+IMGV = 'Archive/imagev.tif'
+imgv = EasyImage(IMGV)
 
 MEM = 'Archive/membrane.tif'
 mem = EasyImage(MEM)
@@ -17,6 +22,9 @@ ves = EasyImage(VES)
 
 SYN = 'Archive/synapse.tif'
 syn = EasyImage(SYN)
+
+SYNV = 'Archive/synapsev.tif'
+synv = EasyImage(SYN)
 
 def rpos():
     return (random.randrange(100, 900),random.randrange(100, 900))
@@ -51,7 +59,7 @@ class DGen:
         '''Gets traning dataset from ns images'''
         vals = [self.get_train(num/ns, size, frac_true, n, condition) for n in xrange(ns)]
         X, y = np.concatenate(tuple(v[0] for v in vals)), np.concatenate(tuple(v[1] for v in vals))
-       # X, y = shuffle(X, y, random_state=0)
+        X, y = shuffle(X, y, random_state=31)
         return X, y
 
 
@@ -80,7 +88,7 @@ class DGen:
                 raise RuntimeError('Could not generate requested number of images!')
         X = np.asarray(pX)
         y = np.asarray(lY)
-       # X, y = shuffle(X, y, random_state=0)
+        X, y = shuffle(X, y, random_state=70)
         return X, y
 
 

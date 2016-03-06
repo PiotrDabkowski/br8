@@ -1,8 +1,35 @@
 from scipy.misc import toimage
 from utils import *
 import cPickle
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers.core import Dense, Dropout, Activation, Flatten, Highway
+from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.utils import np_utils
+from keras.optimizers import SGD, Adam
 import numpy as np
-from dataset_gen import DGen, img, syn, mem, ves, THRESHOLD
+from dataset_gen import DGen, img, imgv, syn, synv, mem, ves, THRESHOLD
+np.random.seed(1337)
+
+
+# PARAMS:
+
+
+IM_SIZE = 77
+NUM_TRAIN = 120000
+NUM_IMGS = 120
+NUM_VAL = 1000
+VAL_IMG = 124
+assert IM_SIZE % 2
+NB_EPOCH = 1
+
+# Model settings
+batch_size = 128
+nb_classes = 2
+img_rows = img_cols = IM_SIZE
+nb_filters = 32
+nb_pool = 2
+nb_conv = 3
 
 
 def condition(raw, pos, label, others):
@@ -11,19 +38,14 @@ def condition(raw, pos, label, others):
     return others['mem'][0,0] > THRESHOLD
 
 
-IM_SIZE = 77
-NUM_TRAIN = 104000
-assert IM_SIZE % 2
-dg = DGen(img, syn)
-
-(X_train, y_train), (X_test, y_test)  = dg.get_uni_train(NUM_TRAIN, IM_SIZE, ns=104, condition=condition), dg.get_train(1000, IM_SIZE, n=105, condition=condition)
-
 #print X_train.shape, y_train.shape
 def quiz(num=25):
+    (X_train, Y_train, y_train), (X_test, Y_test, y_test) = get_data(100, 1)
     def ev(a):
         return 'Correct' if a else 'Wrong'
     s = 0
     c = 0
+
     model = load_model('syn_detection_new3')
     print 'Accuracy %f' % (model.evaluate(X_test, Y_test, verbose=1, show_accuracy=1)[1])
     for n in xrange(num):
@@ -48,92 +70,69 @@ def show_arr(arr):
 
 
 
-# for n in xrange(30):
-#     print y_test[n]
-#     show_arr(X_test[n:n+1])
-#     raw_input()
 
-#sds
+def get_data(num_train=NUM_TRAIN, num_imgs=NUM_IMGS, num_val=NUM_VAL, val_img=VAL_IMG):
+    dg = DGen(img, syn)  # generates training data
+    vg = DGen(imgv, synv)  # generates test data
 
-def anal(n):
-    x = X_test[n:n+1]
-    p = model.predict(x)
-    print p.argmax()
-    show_arr(x.reshape(img_cols,img_rows))
+    X_train, y_train  = dg.get_uni_train(num_train, IM_SIZE, ns=num_imgs, condition=condition)
+    X_test, y_test = vg.get_train(num_val, IM_SIZE, n=val_img, condition=condition)
 
-
-num = NUM_TRAIN
-X_train = X_train[:num]
-y_train = y_train[:num]
+    num = num_train
+    X_train = X_train[:num]
+    y_train = y_train[:num]
 
 
-np.random.seed(1337)
+    X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
+    X_test = X_test.reshape(X_test.shape[0], 1, img_rows, img_cols)
+    X_train = X_train.astype('float32')
+    X_test = X_test.astype('float32')
 
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten, Highway
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
-from keras.utils import np_utils
-from keras.optimizers import SGD, Adam
-
-batch_size = 128
-nb_classes = 2
-nb_epoch = 2
-
-img_rows = img_cols = IM_SIZE
-nb_filters = 32
-nb_pool = 2
-nb_conv = 3
+    Y_train = np_utils.to_categorical(y_train, nb_classes)
+    Y_test = np_utils.to_categorical(y_test, nb_classes)
+    return (X_train, Y_train, y_train), (X_test, Y_test, y_test)
 
 
-X_train = X_train.reshape(X_train.shape[0], 1, img_rows, img_cols)
-X_test = X_test.reshape(X_test.shape[0], 1, img_rows, img_cols)
-X_train = X_train.astype('float32')
-X_test = X_test.astype('float32')
-#X_train /= 255
-#X_test /= 255
-sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+def get_model():
+    sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    model = Sequential()
+
+    model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='valid', input_shape=(1, img_rows, img_cols)))
+    model.add(Activation('relu'))
+    model.add(Convolution2D(nb_filters, nb_conv, nb_conv))
+    model.add(Activation('relu'))
 
 
-Y_train = np_utils.to_categorical(y_train, nb_classes)
-print Y_train[:10]
-Y_test = np_utils.to_categorical(y_test, nb_classes)
+    model.add(Flatten())
+    model.add(Dense(256))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.15))
 
-#quiz()
+    model.add(Dense(128))
+    model.add(Activation('relu'))
 
+    model.add(Dense(nb_classes))
+    model.add(Activation('softmax'))
 
-model = Sequential()
-
-model.add(Convolution2D(nb_filters, nb_conv, nb_conv, border_mode='valid', input_shape=(1, img_rows, img_cols)))
-model.add(Activation('relu'))
-model.add(Convolution2D(nb_filters, nb_conv, nb_conv))
-model.add(Activation('relu'))
-
-
-model.add(Flatten())
-model.add(Dense(256))
-model.add(Activation('relhu'))
-model.add(Dropout(0.15))
-
-model.add(Dense(128))
-model.add(Activation('relu'))
-
-model.add(Dense(nb_classes))
-model.add(Activation('softmax'))
-
-model.compile(loss='categorical_crossentropy', optimizer=sgd)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd)
+    return model
 
 
-model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=nb_epoch, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
+def train_model(path='new_model'):
+    assert isinstance(path, basestring)
+    try: # try to train existing model
+        model = load_model(path)
+    except: # create new if does not exist
+        model = get_model()
+    (X_train, Y_train, y_train), (X_test, Y_test, y_test) = get_data()
+    model.fit(X_train, Y_train, batch_size=batch_size, nb_epoch=NB_EPOCH, show_accuracy=True, verbose=1, shuffle=True, validation_data=(X_test, Y_test))
+    save_model(model, path)
 
-save_model(model, 'synapse_clus77_1')
+def test_accuracy(path):
+    model = load_model(path)
+    (X_train, Y_train, y_train), (X_test, Y_test, y_test) = get_data(100, 1)
+    accuracy = model.evaluate(X_test, Y_test, verbose=1, show_accuracy=1)[1]
+    print 'Accuracy %f' % accuracy
+    return accuracy
 
-raise
-from code import InteractiveConsole
-InteractiveConsole(globals()).interact()
 
-for n in xrange(30, 55):
-    if model.predict(X_test[n:n+1]).argmax()==y_test[n]:
-        print 'Correct'
-    else:
-        print 'Wrong'
