@@ -13,7 +13,7 @@ class VesTrain(GenericTrain):
 
     def condition(self, raw, pos, label, others):
         raw._setcurrent(pos)
-        if label==0 and random.random()>0.2:
+        if label==0 and random.random()>0.05:
             return self.current_model.easy_predict(raw)>0.5  # we want hard cases
         return True
 

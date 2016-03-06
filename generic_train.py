@@ -8,7 +8,6 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D
 from keras.utils import np_utils
 from keras.optimizers import SGD, Adam
 import numpy as np
-np.random.seed(1337)
 
 class GenericTrain:
     # PARAMS:
