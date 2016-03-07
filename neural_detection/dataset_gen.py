@@ -1,7 +1,10 @@
 import random
 
 import numpy as np
-from sklearn.utils import shuffle
+try: # cluster has a problem with this
+    from sklearn.utils import shuffle
+except:
+    pass
 
 from utils.easyimg import EasyImage
 

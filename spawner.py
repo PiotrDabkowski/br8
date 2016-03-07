@@ -13,6 +13,6 @@ def run(j):
     path = EXEC_PATH%j
     with open(path, 'wb') as f:
         f.write(EXECUTION_TEMPLATE % j)
-    os.system("qsub %s" % path)
+    print os.system("qsub %s" % path)
 
 run(0)
