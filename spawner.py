@@ -12,8 +12,8 @@ python detection.py %d'''
 
 EXEC_PATH = 'Runners/pitjob%d.sh'
 
-def run_n(n):
-    for j in xrange(n):
+def run_n(a, b):
+    for j in xrange(a, b):
         run(j)
 
 def run(j):
@@ -22,4 +22,4 @@ def run(j):
         f.write(EXECUTION_TEMPLATE % j)
     print os.system("qsub %s" % path)
 
-run(0)
+run(1, 50)
