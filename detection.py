@@ -5,6 +5,8 @@ from syn_clusters.cluster_analysis import ClusterAnalysis
 from utils.easyimg import EasyImage
 from utils.transforms import retina
 import sys
+sys.path.append('/homes/ugrads/ball4018')
+sys.path.append('/homes/ugrads/ball4018/br8')
 
 DEBUG = 0
 MEM_COL_THRESH = 160
