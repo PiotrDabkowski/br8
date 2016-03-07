@@ -26,6 +26,9 @@ def log_progress(nth=10):
     COUNT += 1
     if not COUNT%1000:
         print COUNT / 1000
+    if not COUNT%100000:
+        with open('Runners/pitjob%d.txt'%NUM, 'wb') as f:
+            f.write(str(COUNT/1000))
     if COUNT%nth: # if you want to 1 every nth px
         raise
 
