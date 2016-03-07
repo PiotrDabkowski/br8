@@ -1,12 +1,16 @@
+import sys
+sys.path.append('/homes/ugrads/ball4018')
+sys.path.append('/homes/ugrads/ball4018/br8')
+sys.path.append('/homes/ugrads/ball4018/.local/lib/python2.7/site-packages/')
+import js2py
+
 from neural_detection import memtrain, syntrain, vtrain
 from neural_detection.dataset_gen import imgv, synv, img, syn
 
 from syn_clusters.cluster_analysis import ClusterAnalysis
 from utils.easyimg import EasyImage
 from utils.transforms import retina
-import sys
-sys.path.append('/homes/ugrads/ball4018')
-sys.path.append('/homes/ugrads/ball4018/br8')
+
 
 DEBUG = 0
 MEM_COL_THRESH = 160
