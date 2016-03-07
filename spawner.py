@@ -1,10 +1,13 @@
 import os
+import sys
 
+sys.path.append('/homes/ugrads/ball4018')
 
 # find . -type f -name pitjob\* -exec rm {} \;
 #os.system('cd ~/br8;find . -type f -name pitjob\* -exec rm {} \;')
 
 EXECUTION_TEMPLATE = '''cd ~/br8
+$HOME = /homes/ugrads/ball4018
 python detection.py %d'''
 
 EXEC_PATH = 'Runners/pitjob%d.sh'
