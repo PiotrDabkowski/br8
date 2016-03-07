@@ -1,5 +1,9 @@
 import os
 
+
+# find . -type f -name pitjob\* -exec rm {} \;
+os.system('cd ~/br8;find . -type f -name pitjob\* -exec rm {} \;')
+
 EXECUTION_TEMPLATE = '''cd ~/br8
 python detection.py %d'''
 
