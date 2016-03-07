@@ -7,7 +7,10 @@ import js2py
 from neural_detection import memtrain, syntrain, vtrain
 from neural_detection.dataset_gen import imgv, synv, img, syn
 
-from syn_clusters.cluster_analysis import ClusterAnalysis
+try:
+    from syn_clusters.cluster_analysis import ClusterAnalysis
+except:
+    pass
 from utils.easyimg import EasyImage
 from utils.transforms import retina
 
@@ -32,7 +35,6 @@ def log_progress(nth=10):
     COUNT += 1
     if not COUNT%1000:
         print COUNT / 1000
-    if not COUNT%100000:
         with open('Runners/pitjob%d.txt'%NUM, 'wb') as f:
             f.write(str(COUNT/1000))
     if COUNT%nth: # if you want to 1 every nth px
