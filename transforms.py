@@ -78,14 +78,17 @@ def retina(im):
 def avg(a, b):
     return (a[0,0] + b[0,0])/2
 
+def img_and(a, b):
+    return (a[0,0] and b[0,0])*255
+
 
 def thresh(im):
-    if im[0,0]>135:
+    if im[0,0]>200:
         return 0
     return 255
 
 def nthresh(im):
-    if im[0,0]<135:
+    if im[0,0]<200:
         return 0
     return 255
 

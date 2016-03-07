@@ -29,30 +29,29 @@ def get_offset(A, B):
     return min(int(round(3*offset/HSQ_SIZE)), 3)
 
 def get_grad(A):
-    return int(round(math.atan(A)/G_SCALER)) % 12
+    return int(round(A/G_SCALER)) % 12
 
 
 
-def find_grad(im):
-    '''see logbook for proof'''
-    MIN_CONST = 10
+
+
+
+def calc_grad(points):
+    '''Returns A, B, E/Emax.  Ax+B'''
     Vx = 0
     Vy = 0
     Mxy = 0
     Mx = 0
     My = 0
-    num_points = 0
-    for point in POINTS:
-        if im[point]:
-            x, y = point
-            Vx += x*x
-            Vy += y*y
-            Mxy += x*y
-            Mx += x
-            My += y
-            num_points += 1
+    num_points = float(len(points))
+    for point in points:
+        x, y = point
+        Vx += x*x
+        Vy += y*y
+        Mxy += x*y
+        Mx += x
+        My += y
     # Normalise params
-    num_points = float(num_points)
     Vx /= num_points
     Vy /= num_points
     Mxy /= num_points
@@ -61,9 +60,7 @@ def find_grad(im):
     # now the formula for optimal a is c2*a^2 + c1*a -c2 = 0
     c2 = Mxy - Mx*My
     if not c2:
-        if num_points>=MIN_CONST:
-            return to_res(6, 3, int(round(3*Mx/HSQ_SIZE)))
-        return to_res(6, 0, 3)
+        return math.pi/2, 0, 0
     c1 = (Vx - Mx*Mx) - (Vy - My*My)
     b = c1/float(c2)
     s = -b/2
@@ -82,9 +79,21 @@ def find_grad(im):
         A, B = A2, B2
         E = E2
         EM = E1
+    return math.atan(A), B, E/EM
+
+
+def find_grad(im):
+    '''see logbook for proof'''
+    MIN_CONST = 10
+    ps = []
+    for point in POINTS:
+        if im[point]:
+            ps.append(point)
+
+    A, B, ER = calc_grad(ps)
     grad = get_grad(A)
-    if num_points>=MIN_CONST:
-        return to_res(grad, 3-int(round(3*E/EM)), get_offset(A, B))
+    if len(ps)>=MIN_CONST:
+        return to_res(grad, 3-int(round(3*ER)), get_offset(A, B))
     return to_res(grad, 0, 3)
 
 

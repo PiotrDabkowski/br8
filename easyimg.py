@@ -10,7 +10,7 @@ def show_arr(arr):
     toimage(arr).show()
 
 class EasyImage(TiffImagePlugin.TiffImageFile):
-    def __init__(self, path):
+    def __init__(self, path='Archive/a1.tif'):
         self.path = path
         TiffImagePlugin.TiffImageFile.__init__(self, path, 'L')
         self.px = self.load()
@@ -98,12 +98,26 @@ class EasyImage(TiffImagePlugin.TiffImageFile):
             func(new, self[0,0])
         return new
 
-    def red_mark(self, source, threshold=150):
+    def _mark(self, source, threshold, color):
         source._setcurrent((0,0))
         new = self.convert('RGB')
         newpx = new.load()
         for pixel in source:
             if source[pixel]>threshold:
-                newpx[pixel] = (255, 0, 0) # red
-        return new
+                newpx[pixel] = color
+        # trick...
+        x = EasyImage()
+        x.convert = lambda typ:  new
+        x.save = lambda p: new.save(p)
+        return x
+
+
+    def red_mark(self, source, threshold=200):
+        return self._mark(source, threshold, (255, 0, 0))
+
+    def green_mark(self, source, threshold=200):
+        return self._mark(source, threshold, (0, 255, 0))
+
+    def blue_mark(self, source, threshold=200):
+        return self._mark(source, threshold, (0, 0, 255))
 
