@@ -1,5 +1,5 @@
-from generic_train import GenericTrain
-from dataset_gen import DGen, img, imgv, syn, synv, mem, ves, THRESHOLD
+from .generic_train import GenericTrain
+from .dataset_gen import DGen, img, imgv, syn, synv, mem, ves, THRESHOLD
 
 class MemTrain(GenericTrain):
     MODEL_NAME = 'membrane_clus41_1'

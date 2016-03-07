@@ -1,7 +1,9 @@
-from easyimg import EasyImage, show_arr
 import random
+
 import numpy as np
 from sklearn.utils import shuffle
+
+from utils.easyimg import EasyImage
 
 THRESHOLD = 200
 

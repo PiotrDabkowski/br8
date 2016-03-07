@@ -1,5 +1,5 @@
-from generic_train import GenericTrain
-from dataset_gen import DGen, img, imgv, syn, synv, mem, ves, THRESHOLD
+from .generic_train import GenericTrain
+from .dataset_gen import DGen, img, imgv, syn, synv, mem, ves, THRESHOLD
 
 class SynTrain(GenericTrain):
     MODEL_NAME = 'syn_detection_new4'

@@ -1,5 +1,6 @@
 from PIL import Image
-from gradient_calc import find_grad, from_grad_res, gradient_show
+
+from utils.gradient_calc import from_grad_res
 
 HV_MOVES = ((0,1), (0,-1), (1,0),(-1,0))
 SMALL_AREA = 15
