@@ -4,6 +4,7 @@ from neural_detection.dataset_gen import imgv, synv, img, syn
 from syn_clusters.cluster_analysis import ClusterAnalysis
 from utils.easyimg import EasyImage
 from utils.transforms import retina
+import sys
 
 DEBUG = 0
 MEM_COL_THRESH = 160
@@ -79,15 +80,18 @@ def save_results(num, ver, cluster_analysis):
     ver.save('Results/ver%d.tif' % num)
 
 
-NUM = 55
-img.seek(NUM)
-syn.seek(NUM)
+assert len(sys.argv)==2
+
+NUM = int(sys.argv[1])
+print NUM
+imgv.seek(NUM)
+synv.seek(NUM)
 
 
 if DEBUG:
     ves, mem, syn = load_evidence(NUM)
 else:
-    ves, mem, syn = get_evidence(imgv, NUM)
+    ves, mem, syn = get_evidence(img, NUM)
 
 c = ClusterAnalysis(ves, mem, syn)
 save_results(NUM, synv, c)
