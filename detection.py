@@ -66,13 +66,19 @@ def get_grad(img):
     return img.refactor(retina)
 
 def get_evidence(img, num=None):
+    global COUNT
     grad = get_grad(img)
 
+    COUNT = 0
     ves = img.merge(grad, can_be_a_vesicle)
+    COUNT = 0
     mem = img.merge(grad, can_be_a_membrane)
+    COUNT = 0
     syn = img.merge(grad, can_be_a_synapse)
+
     if num is not None:
         ves.save('Tests/test%d_ves.tif' % num)
+
         mem.save('Tests/test%d_mem.tif' % num)
         syn.save('Tests/test%d_syn.tif' % num)
     return ves, mem, syn
@@ -91,23 +97,56 @@ def save_results(num, ver, cluster_analysis):
     ver.save('Results/ver%d.tif' % num)
 
 
-if  len(sys.argv)==2:
-    NUM = int(sys.argv[1])
-else:
-    raise
-    NUM = 1
-print NUM
-imgv.seek(NUM)
-synv.seek(NUM)
+
+def evidence_to_result(num=999, overwrite=None, save=True):
+    if overwrite:
+        ves, mem, syn = overwrite
+    else:
+        ves, mem, syn = load_evidence(num)
+
+    c = ClusterAnalysis(ves, mem, syn)
+    if save:
+        if not overwrite:
+            synv.seek(num)
+        save_results(num, synv, c)
+    return c
+
+def compare_results(num):
+    import os
+    path = 'Comparison/%d' % num
+    imgv.seek(num)
+    synv.seek(num)
+    try:
+        os.mkdir(path)
+    except:
+        pass
+    c = evidence_to_result(num, None, False)
+    c.image_clusters(areas=True, only_synapses=True, background=imgv).save(path+'/My Result.tif')
+    imgv.red_mark(synv).save(path+'/Verification Result.tif')
+    imgv.save(path+'/Original Image.tif')
+    ves, mem, syn = load_evidence(num)
+    synv.red_mark(mem).blue_mark(ves).green_mark(syn).save(path+'/fusion.png')
 
 
-if DEBUG:
-    ves, mem, syn = load_evidence(NUM)
-else:
-    ves, mem, syn = get_evidence(imgv, NUM)
 
-c = ClusterAnalysis(ves, mem, syn)
-c.image_clusters(areas=True, background=imgv, only_synapses=True).save('My Result.tif')
-imgv.red_mark(synv).save('Verification Result.tif')
-imgv.save('Actual Image.tif')
-save_results(NUM, synv, c)
+
+
+if __name__=='__main__':
+    if  len(sys.argv)==2:
+        NUM = int(sys.argv[1])
+    else:
+        NUM = 2
+    print NUM
+    imgv.seek(NUM)
+    synv.seek(NUM)
+
+
+    if DEBUG:
+        ves, mem, syn = load_evidence(NUM)
+    else:
+        ves, mem, syn = get_evidence(imgv, NUM)
+    compare_results(0)
+
+
+
+

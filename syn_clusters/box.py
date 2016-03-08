@@ -18,7 +18,10 @@ class Box:
         '''Counts number of true entries in matrix that are inside the box'''
         count = 0
         for point in self.iter_int_points():
-            if matrix[point]:
-                count += 1
+            try:
+                if matrix[point]:
+                    count += 1
+            except:
+                print point
         return count
 

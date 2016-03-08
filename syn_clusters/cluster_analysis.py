@@ -16,7 +16,7 @@ class ClusterAnalysis:
         self.mem = to_bool_arr(mem)
         self.syn = to_bool_arr(syn)
 
-        self.psyn = self.syn & self.mem
+        self.psyn = self.syn #& self.mem
         self.nsyn = ~self.syn & self.mem
         self.psynpoints = np.asarray(zip(*self.psyn.nonzero()))
 
