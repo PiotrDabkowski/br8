@@ -5,7 +5,7 @@ sys.path.append('/homes/ugrads/ball4018')
 sys.path.append('/homes/ugrads/ball4018/.local/lib/python2.7/site-packages/')
 
 
-# find . -type f -name pitjob\* -exec rm {} \;
+# cd ~/br8;find . -type f -name pitjob\* -exec rm {} \;
 #os.system('cd ~/br8;find . -type f -name pitjob\* -exec rm {} \;')
 
 EXECUTION_TEMPLATE = '''cd ~/br8

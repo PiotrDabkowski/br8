@@ -91,9 +91,11 @@ def save_results(num, ver, cluster_analysis):
     ver.save('Results/ver%d.tif' % num)
 
 
-assert len(sys.argv)==2
-
-NUM = int(sys.argv[1])
+if  len(sys.argv)==2:
+    NUM = int(sys.argv[1])
+else:
+    raise
+    NUM = 1
 print NUM
 imgv.seek(NUM)
 synv.seek(NUM)
@@ -102,7 +104,10 @@ synv.seek(NUM)
 if DEBUG:
     ves, mem, syn = load_evidence(NUM)
 else:
-    ves, mem, syn = get_evidence(img, NUM)
+    ves, mem, syn = get_evidence(imgv, NUM)
 
 c = ClusterAnalysis(ves, mem, syn)
+c.image_clusters(areas=True, background=imgv, only_synapses=True).save('My Result.tif')
+imgv.red_mark(synv).save('Verification Result.tif')
+imgv.save('Actual Image.tif')
 save_results(NUM, synv, c)
