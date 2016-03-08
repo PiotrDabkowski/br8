@@ -25,4 +25,4 @@ def run(j):
         f.write(EXECUTION_TEMPLATE % j)
     print os.system("qsub %s" % path)
 
-run_n(1, 50)
+run_n(0, 50)
